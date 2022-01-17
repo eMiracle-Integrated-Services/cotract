@@ -4,9 +4,17 @@
 namespace App\Http\Controllers;
 
 
+use App\Actions\PasswordAction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 class UserController extends Controller
 {
-    private ?\Illuminate\Contracts\Auth\Authenticatable $user;
+
+    /**
+     * @var \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    private $user;
 
     public function __construct()
     {
@@ -21,5 +29,34 @@ class UserController extends Controller
             'status' => true,
             'message' => 'logged out successfully'
         ]);
+    }
+
+    public function updatePassword(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $v = Validator::make( $request->all(), [
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:8',
+        ]);
+
+        if($v->fails()){
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'data' => $v->errors()
+            ], 422);
+        }
+        if (PasswordAction::updatePassword($this->user, $request))
+        {
+            return response()->json([
+                'status' => true,
+                'message' => 'Password changed successfully',
+                'data' => []
+            ]);
+        }
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid credentials supplied',
+            'data' => []
+        ], 422);
     }
 }

@@ -66,11 +66,10 @@ class AuthenticationController extends Controller
 
         if($v->fails()){
             return response()->json([
-                'status' => 'false',
-                'message' => 'Registration Failed',
+                'status' => false,
+                'message' => 'Validation error',
                 'data' => $v->errors()
             ], 422);
-
         }
 
         $user = User::create([
@@ -104,7 +103,7 @@ class AuthenticationController extends Controller
         }
 
         return response()->json([
-            'status' => 'true',
+            'status' => true,
             'message' => 'Account Creation was successful',
             'data' => $user,
             'token' => $token->plainTextToken
@@ -119,7 +118,7 @@ class AuthenticationController extends Controller
 
         if($v->fails()){
             return response()->json([
-                'status' => 'false',
+                'status' => false,
                 'message' => 'Login Failed',
                 'data' => $v->errors()
             ], 422);
@@ -131,20 +130,20 @@ class AuthenticationController extends Controller
         if (PasswordAction::sendPasswordResetToken($request))
         {
             return response([
-                'status' => 'true',
+                'status' => true,
                 'message' => 'Please check your email for token',
                 'data' => '',
             ]);
         }
 
         return response([
-            'status' => 'false',
+            'status' => false,
             'message' => 'Invalid Credentials',
             'data' => '',
         ]);
     }
 
-    public function submitPasswordResetGetToken(Request $request)
+    public function submitPasswordResetGetToken(Request $request): \Illuminate\Http\JsonResponse
     {
         $v = Validator::make( $request->all(), [
             'token' => 'required|string',
@@ -154,8 +153,8 @@ class AuthenticationController extends Controller
 
         if($v->fails()){
             return response()->json([
-                'status' => 'false',
-                'message' => 'Login Failed',
+                'status' => false,
+                'message' => 'Validation error',
                 'data' => $v->errors()
             ], 422);
 
@@ -167,7 +166,7 @@ class AuthenticationController extends Controller
         return response()->json([], 401);
     }
 
-    public function validateEmail(Request $request)
+    public function validateEmail(Request $request): \Illuminate\Http\JsonResponse
     {
         $v = Validator::make( $request->all(), [
             'email' => 'required|email|exists:users,email',
@@ -176,7 +175,7 @@ class AuthenticationController extends Controller
 
         if($v->fails()){
             return response()->json([
-                'status' => 'false',
+                'status' => false,
                 'message' => 'Login Failed',
                 'data' => $v->errors()
             ], 422);
@@ -192,7 +191,7 @@ class AuthenticationController extends Controller
                 report($th);
             }
             return response()->json([
-                'status' => 'true',
+                'status' => true,
                 'message'=> 'Email Verified'
             ]);
         }
@@ -204,7 +203,7 @@ class AuthenticationController extends Controller
         ], 422);
     }
 
-    public function sendEmailValidationCode(Request $request)
+    public function sendEmailValidationCode(Request $request): \Illuminate\Http\JsonResponse
     {
         $v = Validator::make( $request->all(), [
             'email' => 'required|email|exists:users,email',
@@ -212,8 +211,8 @@ class AuthenticationController extends Controller
 
         if($v->fails()){
             return response()->json([
-                'status' => 'false',
-                'message' => 'An error occured',
+                'status' => false,
+                'message' => 'Validation error',
                 'data' => $v->errors()
             ], 422);
 

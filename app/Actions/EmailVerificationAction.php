@@ -5,13 +5,13 @@ namespace App\Actions;
 
 
 use App\Models\User;
-use App\Notifications\EmailVerifyNotification;
+use App\Notifications\Auth\EmailVerifyNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class EmailVerificationAction
 {
-    public static function send(User $user)
+    public static function send(User $user): bool
     {
         $token = (rand(1000,9999));
         $user->email_verification_token()->create([

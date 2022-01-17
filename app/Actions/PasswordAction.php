@@ -3,14 +3,15 @@
 namespace App\Actions;
 
 use App\Models\User;
-use App\Notifications\PasswordChanged;
+use App\Notifications\Auth\PasswordChangedNotification;
+use App\Notifications\Auth\PasswordResetTokenNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 
 class PasswordAction
 {
-    public static function sendPasswordResetToken(Request $request)
+    public static function sendPasswordResetToken(Request $request): bool
     {
         $user = User::where('email', $request->email)->first();
         if ($user){
@@ -30,7 +31,7 @@ class PasswordAction
         return false;
     }
 
-    public static function validatePasswordResetToken(Request $request)
+    public static function validatePasswordResetToken(Request $request): bool
     {
         $user = User::where('email', $request->input('email'))->first();
         if ($user)
@@ -40,7 +41,7 @@ class PasswordAction
                 $user->save();
 
                 try {
-                    Notification::send($user, new PasswordChanged());
+                    Notification::send($user, new PasswordChangedNotification());
                     return true;
                 }catch (\Throwable $throwable) {
                     report($throwable);
