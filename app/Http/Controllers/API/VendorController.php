@@ -1,10 +1,11 @@
 <?php
 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 
 use App\Actions\FileAction;
+use App\Http\Controllers\Controller;
 use App\Models\Resource;
 use App\Models\SafetyVault;
 use App\Models\Vendor;

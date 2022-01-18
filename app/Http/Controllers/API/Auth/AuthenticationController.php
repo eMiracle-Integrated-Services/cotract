@@ -1,18 +1,15 @@
 <?php
 
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\Auth;
 
 
-use App\Actions\EmailVerification;
 use App\Actions\EmailVerificationAction;
-use App\Actions\Password;
 use App\Actions\PasswordAction;
-use App\Mail\UserRegistration;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -185,7 +182,7 @@ class AuthenticationController extends Controller
         $user = User::where('email', $request->email)->first();
         if(EmailVerificationAction::verifyEmail($user, $request->token)){
             try {
-                Notification::send($user, new emailVerifiedNotification());
+                Notification::send($user, new EmailVerifiedNotification());
             }catch (\Throwable $th)
             {
                 report($th);
